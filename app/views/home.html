@@ -1,0 +1,29 @@
+
+<div class="container">
+        <div class="row row-content">
+            <div class="col-xs-12 col-sm-offset-4">
+              <h3>Search Grocery Items</h3> 
+           </div>            
+            <div class="col-xs-12">
+                <form class="form" role="form" name="searchForm" ng-submit="search()" novalidate>
+                    <div class="form-group" ng-class="{ 'has-error' : searchForm.searchInput.$error.required && !searchForm.searchInput.$pristine }">
+                        <div class="col-xs-8 col-xs-offset-1 col-sm-offset-2">
+                        <input type="text" class="form-control" id="searchInput" name="searchInput" placeholder="Enter Your Search"
+                        ng-model="search.searchInput" required>
+                          <span ng-show=" searchForm.searchInput.$error.required && ! searchForm.searchInput.$pristine" class="help-block">Search Input is required.</span>
+                       </div>
+                       <div class="form-group">
+                         <div class="col-xs-12">&nbsp;
+                         </div>
+                       </div>                        
+                    <div class="form-group">
+                        <div class="col-xs-12 col-xs-offset-3 col-sm-offset-5">
+                            <button type="submit" class="btn btn-primary" ng-disabled="searchForm.$invalid">Search</button>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+            </div>
+       </div>  
+</div>         
+    
