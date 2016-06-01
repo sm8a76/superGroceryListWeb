@@ -16,12 +16,17 @@
         <div class="row row-content">
                 <div class='col-xs-12 col-sm-4'>
                     <select class="form-control"
-                       ng-model="currentList"
+                       ng-model="currentListId"
                        ng-options="list._id as list.name for list in myLists">
                         <option value="">None</option>
                     </select>  
                     <span class="help-block">Select a grocery list.</span>
                 </div>
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-4">
+                        <button type="button" class="btn btn-success" ng-click="selectList(currentListId)">GO</button>
+                    </div>
+                </div>             
                 <div class="form-group">
                     <div class="col-xs-12 col-sm-4">
                         <button type="button" class="btn btn-success">Compare prices</button>
@@ -30,6 +35,36 @@
             
         </div>
         
+        
+        <div class="row row-content">
+            
+            <div class='col-xs-12 col-sm-offset-2'>
+               <ul class="media-list">
+                <li class="media" ng-repeat="result in currentList.theList | filter:filtText">
+                    <div class="media-left media-middle">
+                        <a ui-sref="app.dishdetails({id: result._id})">
+                        <img class="media-object img-thumbnail" height="120" width="100"
+                        ng-src={{result.image}} alt="Image Not Found">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h2 class="media-heading">{{result.name}}
+                        <span class="label label-danger label-xs">{{result.label}}</span>
+                        <span class="badge">{{result.price/100 | currency}} at {{result.bestPriceAt}}</span></h2>
+                        <p ng-show="showDetails">Unit: {{result.unit}}</p>
+                        <p ng-show="showDetails">Available: {{result.available}}</p>
+                         <button  ng-click="openAddToList(result._id)" class="btn btn-sm btn-success"
+                    type="button" > Add to List
+                        </button>
+                    </div>
+                </li>
+            </ul>                
+            
+            </div>
+        </div>
+        
+        
+        <!--
         <div class="row row-content">
                 <div class='col-xs-12 col-sm-4'>
                     <select class="form-control"
@@ -46,6 +81,7 @@
                 </div>              
             
         </div>
+        -->
         
         
 

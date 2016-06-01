@@ -189,6 +189,7 @@ angular.module('confusionApp')
     
     $scope.superMarkets = supermarketFactory.query();
     
+    $scope.currentListId = 0;
     $scope.currentList = {};
     $scope.currentSuperMarket = {};
     
@@ -198,6 +199,18 @@ angular.module('confusionApp')
     $scope.addToList = function(id){
         console.log('Adding item ' + id);  
     };
+    
+    $scope.selectList = function(id){
+        console.log('Selecting list ' + id); 
+        for(var i=0; i < $scope.myLists.length; i++){
+            if($scope.myLists[i]._id === id ){
+                $scope.currentList = $scope.myLists[id];
+                break;
+            }
+        }
+        console.log('Showing selected list ' + $scope.currentList.theList); 
+    };
+    
     
     console.log('Entering MyListsController...');    
 }])
