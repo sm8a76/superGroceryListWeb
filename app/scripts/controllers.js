@@ -192,6 +192,7 @@ angular.module('confusionApp')
     $scope.currentListId = 0;
     $scope.currentList = {};
     $scope.currentSuperMarket = {};
+    $scope.totalCost = 0.0;
     
     $scope.myLists = listsFactory.query();
         
