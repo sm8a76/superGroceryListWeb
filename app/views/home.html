@@ -9,7 +9,7 @@
                     <div class="form-group" ng-class="{ 'has-error' : searchForm.searchInput.$error.required && !searchForm.searchInput.$pristine }">
                         <div class="col-xs-8 col-xs-offset-1 col-sm-offset-2">
                         <input type="text" class="form-control" id="searchInput" name="searchInput" placeholder="Enter Your Search"
-                        ng-model="search.searchInput" required>
+                        ng-model="searchCriteria" required>
                           <span ng-show=" searchForm.searchInput.$error.required && ! searchForm.searchInput.$pristine" class="help-block">Search Input is required.</span>
                        </div>
                        <div class="form-group">

@@ -137,18 +137,27 @@ angular.module('confusionApp')
 
 // implement the IndexController and About Controller here
 
-.controller('HomeController', ['$scope', '$state', function ($scope, $state) {
+.controller('HomeController', ['$scope', '$state', 'groceryFactory', function ($scope, $state, groceryFactory) {
+    
+    $scope.searchCriteria = '';
     
     $scope.search = function(){
-        $state.go('app.searchresults', {}, {reload: true});
+        $state.go('app.searchresults', {criteria: $scope.searchCriteria}, {reload: true});
     };
     
 }])
 
-.controller('SearchResultsController', ['$scope', 'ngDialog', 'groceryFactory', function ($scope, ngDialog, groceryFactory){
-    $scope.showDetails = true;
+.controller('SearchResultsController', ['$scope', '$stateParams', 'ngDialog', 'groceryFactory', function ($scope, $stateParams, ngDialog, groceryFactory){
     
-    $scope.results = groceryFactory.query();
+    groceryFactory.query({name: { $regex:/*$stateParams.criteria*/i})
+        .$promise.then(
+            function (response) {
+                $scope.results = response;
+            },
+            function (response) {
+                $scope.message = 'Error: ' + response.status + ' ' + response.statusText;
+            }
+        );                                           
     
     $scope.addToList = function(id){
         console.log('Adding item ' + id);  

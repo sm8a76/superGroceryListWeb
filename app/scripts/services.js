@@ -2,8 +2,8 @@
 
 angular.module('confusionApp')
 .constant("baseURL", "http://localhost:3000/")
-//.factory('groceryFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
-.factory('groceryFactory', [function () {
+.factory('groceryFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+/*.factory('groceryFactory', [function () {
     
     var groceries = [
         { _id: 0,
@@ -58,19 +58,19 @@ angular.module('confusionApp')
     service.query = function(){
             return groceries;
     };
+    
+    return service;*/
 
-    /*return $resource(baseURL + "dishes/:id", null, {
+    return $resource(baseURL + "groceries/:id", null, {
         'update': {
             method: 'PUT'
         }
-    });*/
-    
-    return service;
+    });
     
 }])
 
-//.factory('listsFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
-.factory('listsFactory',[function(){
+.factory('listsFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+/*.factory('listsFactory',[function(){
     
     var myLists = [ 
         { _id: 0,
@@ -132,14 +132,40 @@ angular.module('confusionApp')
             return myLists;
     };    
     
-    return service;
+    return service;*/
+    
+    return $resource(baseURL + "lists/:id", null, {
+        'update': {
+            method: 'PUT'
+        }
+    });    
     
     
 }])
 
+.factory('listItemFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+    
+    return $resource(baseURL + "GET /lists/:id/listItems/:itemId", {id:"@id", itemId: "@itemId"}, {
+        'update': {
+            method: 'PUT'
+        }
+    });       
+    
+}])
 
-//.factory('supermarketFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
-.factory('supermarketFactory',[function(){
+.factory('customerFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+    
+    return $resource(baseURL + "GET /customers/:id/lists/:listId", {id:"@id", listId: "@listId"}, {
+        'update': {
+            method: 'PUT'
+        }
+    });       
+    
+}])
+
+
+.factory('supermarketFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+/*.factory('supermarketFactory',[function(){
     
     var superMarkets = [
         { name: 'HEB'},
@@ -154,11 +180,37 @@ angular.module('confusionApp')
             return superMarkets;
     };      
     
-    return service;
+    return service;*/
+    
+    return $resource(baseURL + "supermarkets/:id", null, {
+        'update': {
+            method: 'PUT'
+        }
+    });       
     
 }])
 
+.factory('quoteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+    
+    return $resource(baseURL + "quotes/:id", null, {
+        'update': {
+            method: 'PUT'
+        }
+    });       
+    
+}])
 
+.factory('groceryQuoteFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+    
+    return $resource(baseURL + "groceries/:id/quotes/:quoteId", {id:"@id", listId: "@quoteId"}, {
+        'update': {
+            method: 'PUT'
+        }
+    });       
+    
+}])
+
+/*
 .factory('menuFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
 
         return $resource(baseURL + "dishes/:id", null, {
@@ -222,7 +274,7 @@ angular.module('confusionApp')
             }
         });
 
-}])
+}])*/
 
 .factory('$localStorage', ['$window', function ($window) {
     return {
@@ -284,7 +336,7 @@ angular.module('confusionApp')
      
     authFac.login = function(loginData) {
         
-        $resource(baseURL + "users/login")
+        $resource(baseURL + "customers/login")
         .save(loginData,
            function(response) {
               storeUserCredentials({username:loginData.username, token: response.token});
