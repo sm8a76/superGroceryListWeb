@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('confusionApp')
-.constant("baseURL", "http://localhost:3000/")
-.factory('groceryFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+.constant("baseURL", "http://localhost:3000/api/")
+.factory('groceryFactory', ['$resource', 'baseURL', 'AuthFactory', function ($resource, baseURL, AuthFactory) {
 /*.factory('groceryFactory', [function () {
     
     var groceries = [
@@ -60,6 +60,8 @@ angular.module('confusionApp')
     };
     
     return service;*/
+    AuthFactory.setToken();
+    console.log('Token set in header');
 
     return $resource(baseURL + "groceries/:id", null, {
         'update': {
@@ -333,6 +335,10 @@ angular.module('confusionApp')
     $http.defaults.headers.common['x-access-token'] = authToken;
     $localStorage.remove(TOKEN_KEY);
   }
+    
+    authFac.setToken = function() {
+        loadUserCredentials();
+    };
      
     authFac.login = function(loginData) {
         

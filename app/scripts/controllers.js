@@ -147,12 +147,17 @@ angular.module('confusionApp')
     
 }])
 
-.controller('SearchResultsController', ['$scope', '$stateParams', 'ngDialog', 'groceryFactory', function ($scope, $stateParams, ngDialog, groceryFactory){
+.controller('SearchResultsController', ['$scope', '$stateParams', 'ngDialog', 'groceryFactory', '$localStorage', function ($scope, $stateParams, ngDialog, groceryFactory, $localStorage){
     
-    groceryFactory.query({name: { $regex:/*$stateParams.criteria*/i})
+    $scope.loginData = $localStorage.getObject('userinfo','{}');
+    
+    
+    groceryFactory.query({name: $stateParams.criteria})
         .$promise.then(
             function (response) {
                 $scope.results = response;
+                console.log($scope.results.length);
+                console.log($scope.results);
             },
             function (response) {
                 $scope.message = 'Error: ' + response.status + ' ' + response.statusText;
