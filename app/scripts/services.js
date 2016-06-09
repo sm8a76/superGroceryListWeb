@@ -2,7 +2,8 @@
 
 angular.module('confusionApp')
 .constant("baseURL", "http://localhost:3000/api/")
-.factory('groceryFactory', ['$resource', 'baseURL', 'AuthFactory', function ($resource, baseURL, AuthFactory) {
+.constant("TOKEN_KEY", "Token")
+.factory('groceryFactory', ['$resource', 'baseURL', 'AuthFactory', '$localStorage', 'TOKEN_KEY', function ($resource, baseURL, AuthFactory, $localStorage, TOKEN_KEY) {
 /*.factory('groceryFactory', [function () {
     
     var groceries = [
@@ -60,10 +61,17 @@ angular.module('confusionApp')
     };
     
     return service;*/
-    AuthFactory.setToken();
-    console.log('Token set in header');
+    
+    //AuthFactory.setToken();
+    //console.log('Token set in header');
 
-    return $resource(baseURL + "groceries/:id", null, {
+    var credentials = $localStorage.getObject(TOKEN_KEY,'{}');
+    var token = credentials.token;
+    
+    console.log('token='+token);
+    //if(token == undefined) throw Error('No token found.');
+
+    return $resource(baseURL + "groceries/:id", {id:"@id", access_token: token}, {
         'update': {
             method: 'PUT'
         }
@@ -298,10 +306,9 @@ angular.module('confusionApp')
     }
 }])
 
-.factory('AuthFactory', ['$resource', '$http', '$localStorage', '$rootScope', '$window', 'baseURL', 'ngDialog', function($resource, $http, $localStorage, $rootScope, $window, baseURL, ngDialog){
+.factory('AuthFactory', ['$resource', '$http', '$localStorage', '$rootScope', '$window', 'baseURL', 'ngDialog', 'TOKEN_KEY', function($resource, $http, $localStorage, $rootScope, $window, baseURL, ngDialog, TOKEN_KEY){
     
     var authFac = {};
-    var TOKEN_KEY = 'Token';
     var isAuthenticated = false;
     var username = '';
     var authToken = undefined;
@@ -323,6 +330,9 @@ angular.module('confusionApp')
     isAuthenticated = true;
     username = credentials.username;
     authToken = credentials.token;
+      
+    console.log('user:credentials:username='+credentials.username);
+    console.log('user:credentials:token='+credentials.token);
  
     // Set the token as header for your requests!
     $http.defaults.headers.common['x-access-token'] = authToken;
@@ -334,6 +344,7 @@ angular.module('confusionApp')
     isAuthenticated = false;
     $http.defaults.headers.common['x-access-token'] = authToken;
     $localStorage.remove(TOKEN_KEY);
+    console.log('User Credentials destroyed.');
   }
     
     authFac.setToken = function() {
@@ -345,20 +356,32 @@ angular.module('confusionApp')
         $resource(baseURL + "customers/login")
         .save(loginData,
            function(response) {
-              storeUserCredentials({username:loginData.username, token: response.token});
+              console.log('login:Successful');
+              console.log('response:token='+response.id);
+              storeUserCredentials({username:loginData.username, token: response.id});
               $rootScope.$broadcast('login:Successful');
            },
            function(response){
               isAuthenticated = false;
             
+              /*var message = '\
+                <div class="ngdialog-message">\
+                <div><h3>Login Unsuccessful</h3></div>' +
+                  '<div><p>' +  response.error.message + '</p><p>' +
+                    response.error.name + '</p></div>' +
+                '<div class="ngdialog-buttons">\
+                    <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click=confirm("OK")>OK</button>\
+                </div>';*/
+            
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Login Unsuccessful</h3></div>' +
-                  '<div><p>' +  response.data.err.message + '</p><p>' +
-                    response.data.err.name + '</p></div>' +
+                  '<div><p>' +  'Login Failed' + '</p><p>' +
+                    'LOGIN_FAILED' + '</p></div>' +
                 '<div class="ngdialog-buttons">\
                     <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click=confirm("OK")>OK</button>\
-                </div>'
+                </div>';
+            
             
                 ngDialog.openConfirm({ template: message, plain: 'true'});
            }
@@ -368,8 +391,14 @@ angular.module('confusionApp')
     };
     
     authFac.logout = function() {
-        $resource(baseURL + "users/logout").get(function(response){
-        });
+        var credentials = $localStorage.getObject(TOKEN_KEY,'{}');
+        var token = credentials.token;
+        
+        
+        $resource(baseURL + "customers/logout", {access_token: token}).save(
+            function(response){ 
+                console.log('Logout:successful');        
+            });
         destroyUserCredentials();
     };
     
@@ -391,8 +420,8 @@ angular.module('confusionApp')
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Registration Unsuccessful</h3></div>' +
-                  '<div><p>' +  response.data.err.message + 
-                  '</p><p>' + response.data.err.name + '</p></div>';
+                  '<div><p>' +  response.error.message + 
+                  '</p><p>' + response.error.name + '</p></div>';
 
                 ngDialog.openConfirm({ template: message, plain: 'true'});
 

@@ -137,7 +137,7 @@ angular.module('confusionApp')
 
 // implement the IndexController and About Controller here
 
-.controller('HomeController', ['$scope', '$state', 'groceryFactory', function ($scope, $state, groceryFactory) {
+.controller('HomeController', ['$scope', '$state', function ($scope, $state) {
     
     $scope.searchCriteria = '';
     
@@ -148,8 +148,6 @@ angular.module('confusionApp')
 }])
 
 .controller('SearchResultsController', ['$scope', '$stateParams', 'ngDialog', 'groceryFactory', '$localStorage', function ($scope, $stateParams, ngDialog, groceryFactory, $localStorage){
-    
-    $scope.loginData = $localStorage.getObject('userinfo','{}');
     
     
     groceryFactory.query({name: $stateParams.criteria})
@@ -333,6 +331,10 @@ angular.module('confusionApp')
         if($scope.rememberMe){
            $localStorage.storeObject('userinfo',$scope.loginData);
         }
+        
+        console.log('userinfo='+$scope.loginData);
+        console.log('userinfo:username='+$scope.loginData.username);
+        console.log('userinfo:password='+$scope.loginData.password);
 
         AuthFactory.login($scope.loginData);
 
